@@ -1,0 +1,22 @@
+# ---------------------------------------------------------------------------- #
+#                            Development Dockerfile                            #
+# ---------------------------------------------------------------------------- #
+
+FROM node:latest
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+# Nodemon for hot reloads
+RUN npm install --save-dev nodemon
+
+EXPOSE 3000
+
+ENV NODE_ENV=development
+ENV PORT=3000
+
+CMD ["npx", "nodemon", "index.js"]

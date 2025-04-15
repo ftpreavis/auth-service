@@ -1,16 +1,32 @@
+# ---------------------------------------------------------------------------- #
+#                             Production Dockerfile                            #
+# ---------------------------------------------------------------------------- #
+
+# ------------------------------ Build omit dev ------------------------------ #
+
+FROM node:latest AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+COPY . .
+
+# ----------------------------- Build final image ---------------------------- #
+
 FROM node:latest
 
 WORKDIR /app
 
-# Copy existing files if any (to avoid overwriting)
-COPY . .
+COPY --from=builder /app /app
 
-# Default command: init project + install Fastify if needed
-CMD ["/bin/sh", "-c", "\
-  if [ ! -f package.json ]; then \
-    echo '📦 No package.json found, running npm init -y...'; \
-    npm init -y; \
-  fi && \
-  echo '🚀 Installing Fastify...' && \
-  npm install fastify && \
-  echo '✅ Fastify installed. Project initialized at /app'"]
+RUN groupadd -r app && useradd -m -g app app
+USER app
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+ENV PORT=3000
+
+CMD ["node", "index.js"]
