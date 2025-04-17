@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/ftpreavis/auth-service#readme",
   "dependencies": {
-    "fastify": "^5.3.0"
+    "fastify": "^5.3.0",
+    "fastify-metrics": "^12.1.0"
   }
 }

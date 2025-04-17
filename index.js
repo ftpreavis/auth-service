@@ -1,6 +1,9 @@
 import fastify from 'fastify'
+import metrics from 'fastify-metrics'
 
 const server = fastify()
+
+server.register(metrics, { endpoint: '/metrics' })
 
 server.get('/', async (request, reply) => {
 	return 'pong\n'
