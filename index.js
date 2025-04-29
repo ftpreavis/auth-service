@@ -114,8 +114,8 @@ fastify.get('/logout', async (request, reply) => {
 
 fastify.listen({ host: '0.0.0.0', port: 3000}, (err, addr) => {
 	if (err) {
-		console.error(err)
-		process.exit(1)
+		fastify.log.error(err);
+		process.exit(1);
 	}
 	console.log(`Server listening at ${addr}`)
 })
