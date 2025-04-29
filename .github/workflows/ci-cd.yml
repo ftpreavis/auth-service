@@ -1,0 +1,13 @@
+# .github/workflows/ci-cd.yml
+name: Microservice CI/CD
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  microservice-deploy:
+    uses: ftpreavis/.github/.github/workflows/microservice-ci-cd.yml@master
+    with:
+      service_name: auth-service
+    secrets: inherit
