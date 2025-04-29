@@ -1,12 +1,18 @@
+<<<<<<< HEAD
 import Fastify from 'fastify';
 import axios from 'axios';
 import fastifyOauth2 from '@fastify/oauth2';
 import dotenv from 'dotenv';
+=======
+const Fastify = require('fastify');
+const axios = require('axios');
+const metrics = require('fastify-metrics');
+>>>>>>> dd8c26e (- | removed google auth)
 
-dotenv.config();
 
 const fastify = Fastify({ logger: true });
 
+<<<<<<< HEAD
 // Enregistrer le plugin OAuth2
 fastify.register(fastifyOauth2, {
 	name: 'googleOAuth2',
@@ -71,6 +77,10 @@ fastify.get('/auth/logout', async (request, reply) => {
 	const googleLogoutUrl = 'https://accounts.google.com/Logout';
 	reply.redirect(googleLogoutUrl);
 });
+=======
+fastify.register(metrics, { endpoint: '/metrics' });
+fastify.register(require('@fastify/cookie'));
+>>>>>>> dd8c26e (- | removed google auth)
 
 // Démarrer le serveur
 fastify.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
