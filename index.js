@@ -54,7 +54,7 @@ fastify.post('/login', async (req, reply) => {
 	try {
 
 		// Try to get user by username or email
-		let res = await axios.get(`${DB_SERVICE}/users/${identifier}`);
+		let res = await axios.get(`${DB_SERVICE}/users/internal/${identifier}`);
 		let user = res.data;
 
 		// if (!user) {
