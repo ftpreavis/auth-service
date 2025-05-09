@@ -2,7 +2,7 @@
 #                            Development Dockerfile                            #
 # ---------------------------------------------------------------------------- #
 
-FROM node:latest
+FROM node:24
 
 WORKDIR /app
 
