@@ -1,19 +1,22 @@
-# ---------------------------------------------------------------------------- #
-#                            Development Dockerfile                            #
-# ---------------------------------------------------------------------------- #
-
+# ----------------------------------------------------------------------------
+# Development image: live-reload with nodemon
+# ----------------------------------------------------------------------------
 FROM node:24
 
 WORKDIR /app
 
+# 1) install ALL deps (including dev stuff like nodemon)
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# 2) copy your source
 COPY . .
 
-# Nodemon for hot reloads
-RUN npm install --save-dev nodemon
-
 EXPOSE 3000
-
-ENV NODE_ENV=development
 ENV PORT=3000
 
-CMD ["sh", "-c", "npm install && npx nodemon index.js"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=3s \
+  CMD curl -f http://localhost:3000/metrics || exit 1
+
+# 3) start with auto-reload
+CMD ["npx", "nodemon", "index.js"]
