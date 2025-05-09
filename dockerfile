@@ -9,9 +9,10 @@ COPY . .
 FROM node:24-bookworm
 WORKDIR /app
 
-COPY --from=builder /app /app
+# — copy your built files, chowning them to app:app in one go
+COPY --from=builder --chown=app:app /app /app
 
-RUN addgroup -S app && adduser -S -G app app
+# — switch to that user
 USER app
 
 ENV NODE_ENV=production
