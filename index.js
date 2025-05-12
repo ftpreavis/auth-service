@@ -1,5 +1,6 @@
 const fastify = require('fastify')();
 const metrics = require('fastify-metrics');
+const { getVaultValue } = require('./middleware/vault-client');
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
@@ -10,8 +11,10 @@ dotenv.config();
 fastify.register(metrics, { endpoint: '/metrics' });
 fastify.register(require('@fastify/cookie'));
 
-fastify.register(fastifyjwt, {
-	secret: process.env.JWT_SECRET,
+fastify.register(fastifyJwt, {
+	secret: async (req, reply) => {
+		return getVaultValue('jwt', 'JWT_SECRET')
+	},
 	cookie: {
 		cookieName: 'access_token',
 		signed: false,
