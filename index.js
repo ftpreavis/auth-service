@@ -11,7 +11,7 @@ dotenv.config();
 fastify.register(metrics, { endpoint: '/metrics' });
 fastify.register(require('@fastify/cookie'));
 
-fastify.register(fastifyJwt, {
+fastify.register(fastifyjwt, {
 	secret: async (req, reply) => {
 		return getVaultValue('jwt', 'JWT_SECRET')
 	},
