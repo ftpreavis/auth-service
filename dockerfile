@@ -21,20 +21,18 @@ WORKDIR /app
 # 1) Create a non-root user
 RUN adduser --system --no-create-home --group app
 
-# 2) Ensure production mode
-ENV NODE_ENV=production
-
 # 3) Install only prod-deps
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
-# 4) Copy your application (and any build artifacts) from the builder
-COPY --from=builder /app .
+COPY --from=builder /app/index.js ./
+COPY --from=builder /app/routes ./routes
+COPY --from=builder /app/middleware ./middleware
 
 USER app
 
 # 5) Basic healthcheck (adjust path as needed)
-HEALTHCHECK --interval=30s --timeout=5s --start-period=3s \
+HEALTHCHECK --interval=10s --timeout=5s --start-period=5s \
   CMD curl -f http://localhost:3000/metrics || exit 1
 
 EXPOSE 3000
