@@ -11,25 +11,24 @@ dotenv.config();
 fastify.register(metrics, { endpoint: '/metrics' });
 fastify.register(require('@fastify/cookie'));
 
-fastify.register(fastifyjwt, {
-	secret: async (req, reply) => {
-		return getVaultValue('jwt', 'JWT_SECRET')
-	},
-	cookie: {
-		cookieName: 'access_token',
-		signed: false,
-	}
-});
+// fastify.register(fastifyjwt, {
+// 	secret: async (req, reply) => {
+// 		return getVaultValue('jwt', 'JWT_SECRET')
+// 	},
+// 	cookie: {
+// 		cookieName: 'access_token',
+// 		signed: false,
+// 	}
+// });
 
 const DB_SERVICE = 'http://db-service:3000';
 
-// Create JWT
 function createToken(user) {
 	return fastify.jwt.sign({
 		id: user.id,
 		username: user.username,
 		email: user.email,
-	});
+	}, { secret: jwtSecret }); // explicit
 }
 
 //Signup local
@@ -115,10 +114,25 @@ fastify.get('/logout', async (request, reply) => {
 	return reply.send({ message: 'Logged out' });
 })
 
-fastify.listen({ host: '0.0.0.0', port: 3000}, (err, addr) => {
-	if (err) {
-		fastify.log.error(err);
-		process.exit(1);
-	}
-	console.log(`Server listening at ${addr}`)
-})
+let jwtSecret;
+
+(async () => {
+	jwtSecret = await getVaultValue('jwt', 'JWT_SECRET');
+
+	fastify.register(fastifyjwt, {
+		secret: jwtSecret,
+		cookie: {
+			cookieName: 'access_token',
+			signed: false,
+		},
+	});
+
+	// Démarre le serveur après l'enregistrement du plugin
+	fastify.listen({ host: '0.0.0.0', port: 3000 }, (err, addr) => {
+		if (err) {
+			fastify.log.error(err);
+			process.exit(1);
+		}
+		console.log(`Server listening at ${addr}`);
+	});
+})();
