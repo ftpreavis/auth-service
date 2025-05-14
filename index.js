@@ -86,7 +86,7 @@ fastify.post('/login', async (req, reply) => {
 		return { id: user.id };
 	} catch (err) {
 		req.log.error(err.response?.data || err.message);
-		return reply.code(err.response?.status || 500).send({ error: 'Login failed' });
+		return reply.code(401).send({ error: 'Invalid credentials' });
 	}
 });
 
