@@ -14,15 +14,15 @@ dotenv.config();
 fastify.register(metrics, { endpoint: '/metrics' });
 fastify.register(require('@fastify/cookie'));
 
-fastify.register(fastifyjwt, {
-	secret: async (req, reply) => {
-		return getVaultValue('jwt', 'JWT_SECRET')
-	},
-	cookie: {
-		cookieName: 'access_token',
-		signed: false,
-	}
-});
+// fastify.register(fastifyjwt, {
+// 	secret: async (req, reply) => {
+// 		return getVaultValue('jwt', 'JWT_SECRET')
+// 	},
+// 	cookie: {
+// 		cookieName: 'access_token',
+// 		signed: false,
+// 	}
+// });
 
 fastify.decorate('verify2FAToken', async function (request, reply) {
 	try {
@@ -55,7 +55,7 @@ async function createToken(user) {
 		id: user.id,
 		username: user.username,
 		email: user.email,
-	});
+	}, { secret: jwtSecret }); // explicit
 }
 
 //Signup local
@@ -125,7 +125,7 @@ fastify.post('/login', async (req, reply) => {
 
 	} catch (err) {
 		req.log.error(err.response?.data || err.message);
-		return reply.code(err.response?.status || 500).send({ error: 'Login failed' });
+		return reply.code(401).send({ error: 'Invalid credentials' });
 	}
 });
 
@@ -258,3 +258,4 @@ fastify.listen({ host: '0.0.0.0', port: 3000}, (err, addr) => {
 	}
 	console.log(`Server listening at ${addr}`)
 })
+
